@@ -1,12 +1,30 @@
+import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import { EmployeeModel } from '@fcai-sis/shared-models';
+import { EmployeeModel, UserModel } from '@fcai-sis/shared-models';
 
-type HandlerRequest = Request<{}, {}, { fullName: string, email: string, username: string }>;
+type HandlerRequest = Request<{}, {}, { fullName: string, email: string, username: string; password: string }>;
 
 const createEmployeeHandler = async (req: HandlerRequest, res: Response) => {
-  const { fullName, email, username } = req.body;
+  const { fullName, email, username, password } = req.body;
 
-  const employee = await EmployeeModel.create({ fullName, email, username });
+  const existingEmployee = await EmployeeModel.findOne({
+    $or: [
+      { email },
+      { username },
+    ],
+  });
+
+  if (existingEmployee) {
+    const reason = existingEmployee.email === email ? 'email' : 'username';
+    return res.status(400).json({
+      message: `Employee already exists with this ${reason}`,
+    });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await UserModel.create({ password: hashedPassword });
+  const employee = await EmployeeModel.create({ fullName, email, username, userId: user._id });
 
   res.status(201).json({
     ...employee.toObject(),

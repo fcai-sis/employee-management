@@ -20,6 +20,12 @@ const validateCreateEmployeeMiddleware = [
     .withMessage('Username is required')
     .isString()
     .withMessage('Username must be a string'),
+  validator
+    .body('password')
+    .exists()
+    .withMessage('Password is required')
+    .isString()
+    .withMessage('Password must be a string'),
 
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validator.validationResult(req);

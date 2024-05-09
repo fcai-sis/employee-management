@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { asyncHandler } from "@fcai-sis/shared-utilities";
 
-import validateCreateEmployeeMiddleware from "./logic/middlewares/validateCreateEmployee.middleware";
 import createEmployeeHandler from "./logic/handlers/createEmployee.middleware";
+import validateCreateEmployeeMiddleware from "./logic/middlewares/validateCreateEmployee.middleware";
 
 export default (router: Router) => {
   router.post(
