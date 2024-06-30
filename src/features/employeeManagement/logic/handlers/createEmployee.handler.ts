@@ -1,6 +1,11 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { EmployeeModel, IEmployee, UserModel } from "@fcai-sis/shared-models";
+import {
+  EmployeeModel,
+  IEmployee,
+  RoleEnum,
+  UserModel,
+} from "@fcai-sis/shared-models";
 
 type HandlerRequest = Request<
   {},
@@ -28,7 +33,10 @@ const createEmployeeHandler = async (req: HandlerRequest, res: Response) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await UserModel.create({ password: hashedPassword });
+  const user = await UserModel.create({
+    password: hashedPassword,
+    role: RoleEnum[2],
+  });
   const createdEmployee = await EmployeeModel.create({
     fullName: employee.fullName,
     email: employee.email,

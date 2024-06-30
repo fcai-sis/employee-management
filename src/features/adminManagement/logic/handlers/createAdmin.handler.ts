@@ -1,6 +1,11 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { AdminModel, IAdmin, UserModel } from "@fcai-sis/shared-models";
+import {
+  AdminModel,
+  IAdmin,
+  RoleEnum,
+  UserModel,
+} from "@fcai-sis/shared-models";
 
 type HandlerRequest = Request<
   {},
@@ -27,7 +32,10 @@ const createAdminHandler = async (req: HandlerRequest, res: Response) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await UserModel.create({ password: hashedPassword });
+  const user = await UserModel.create({
+    password: hashedPassword,
+    role: RoleEnum[0],
+  });
   const createdAdmin = await AdminModel.create({
     fullName: admin.fullName,
     email: admin.email,
